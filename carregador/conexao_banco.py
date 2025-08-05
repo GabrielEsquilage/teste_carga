@@ -26,9 +26,18 @@ def get_db_connection():
 
 
     except psycopg2.OperationalError as e:
-        print(f"ERRO CRÍTICO: Não foi possível conectar ao banco de dados. Verifique as credenciais e a rede.")
-        print(f"Detalhes do erro: {e}")
-        return None
+            error_message = f"""
+            FALHA CRÍTICA NA CONEXÃO COM O BANCO.
+            A thread não poderá prosseguir. Verifique os seguintes pontos:
+            1. O IP/Host '{os.getenv('DB_HOST')}' está correto e acessível?
+            2. A porta '{os.getenv('DB_PORT')}' está aberta no firewall?
+            3. O usuário '{os.getenv('DB_USER')}' e a senha estão corretos?
+            4. O banco de dados '{os.getenv('DB_NAME')}' realmente existe?
+            Detalhes originais do erro: {e}
+            """
+            logging.critical(error_message)
+            return None
+
     except Exception as e:
-        print(f"ERRO INESPERADO ao conectar ao banco: {e}")
+        logging.exception("Ocorreu um erro inesperado ao tentar conectar...")
         return None
