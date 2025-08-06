@@ -1,0 +1,4 @@
+# file: /home/gabrielesquilage/automacao_carga/.venv/bin/schemathesis
+# hypothesis_version: 6.137.1
+
+['-script.pyw', '.exe', '__main__']

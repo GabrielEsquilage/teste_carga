@@ -1,0 +1,8 @@
+generation.max-examples = 500
+
+# Increase timeout for slow APIs
+request-timeout = 10.0
+
+# Basic authentication
+#[auth]
+#basic = { username = "${USERNAME}", password = "${PASSWORD}" }

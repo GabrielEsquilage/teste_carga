@@ -1,43 +1,55 @@
 import logging
-import os
-import psycopg2
-from dotenv import load_dotenv
+from psycopg2 import pool, Error
 
+# O módulo não se preocupa mais com .env ou os
+# A configuração de logging pode continuar aqui
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '..','.env')
-load_dotenv(dotenv_path=dotenv_path)
+db_pool = None
 
-def get_db_connection():
-    try:
-        conn = psycopg2.connect(
-            host=os.getenv('DB_HOST'),
-            port=os.getenv('DB_PORT'),
-            dbname=os.getenv('DB_NAME'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD')
-        )
-        logging.info("Conexão bem suscedida.")
-        return conn
+# A função agora recebe a configuração como um dicionário
+def inicializar_pool(db_config: dict):
+    global db_pool
+    if db_pool is None:
+        try:
+            logging.info("Inicializando o pool de conexões com o banco de dados...")
+            # Usa os valores do dicionário recebido, em vez de os.getenv()
+            db_pool = pool.SimpleConnectionPool(
+                minconn=5,
+                maxconn=50,
+                host=db_config.get('DB_HOST'),
+                port=db_config.get('DB_PORT'),
+                dbname=db_config.get('DB_NAME'),
+                user=db_config.get('DB_USER'),
+                password=db_config.get('DB_PASSWORD')
+            )
+            logging.info("Pool de conexões inicializado com sucesso.")
+        except Error as e:
+            logging.critical(f"Falha CRÍTICA ao inicializar o pool de conexões: {e}", exc_info=True)
+            db_pool = None
 
-
-    except psycopg2.OperationalError as e:
-            error_message = f"""
-            FALHA CRÍTICA NA CONEXÃO COM O BANCO.
-            A thread não poderá prosseguir. Verifique os seguintes pontos:
-            1. O IP/Host '{os.getenv('DB_HOST')}' está correto e acessível?
-            2. A porta '{os.getenv('DB_PORT')}' está aberta no firewall?
-            3. O usuário '{os.getenv('DB_USER')}' e a senha estão corretos?
-            4. O banco de dados '{os.getenv('DB_NAME')}' realmente existe?
-            Detalhes originais do erro: {e}
-            """
-            logging.critical(error_message)
-            return None
-
-    except Exception as e:
-        logging.exception("Ocorreu um erro inesperado ao tentar conectar...")
+# As outras funções permanecem iguais
+def get_conexao_do_pool():
+    if db_pool is None:
+        logging.error("O pool de conexões não foi inicializado.")
         return None
+    try:
+        return db_pool.getconn()
+    except Exception as e:
+        logging.exception("Não foi possível obter uma conexão do pool.")
+        return None
+
+def devolver_conexao_ao_pool(conn):
+    if db_pool and conn:
+        db_pool.putconn(conn)
+
+def fechar_pool():
+    global db_pool
+    if db_pool:
+        db_pool.closeall()
+        logging.info("Pool de conexões fechado.")
+        db_pool = None
