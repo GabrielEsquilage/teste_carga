@@ -33,11 +33,11 @@ try:
         user=db_user,
         password=db_password
     )
-    print("\n✅ ✅ ✅ SUCESSO! A conexão foi estabelecida com o banco de dados! ✅ ✅ ✅")
+    print("\nSUCESSO! A conexão foi estabelecida com o banco de dados!")
     print(f"Versão do PostgreSQL: {conn.server_version}")
 
 except Exception as e:
-    print("\n❌ ❌ ❌ FALHA! A conexão com o banco de dados falhou. ❌ ❌ ❌")
+    print("\nFALHA! A conexão com o banco de dados falhou.")
     print("\nCausa do erro direto da biblioteca psycopg2:")
     print("-------------------------------------------------")
     print(e)
