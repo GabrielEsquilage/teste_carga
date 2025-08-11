@@ -27,32 +27,6 @@ where
  and m.ativo = true
  and m.exclusao is null
  and m.status_id = 20
- and (cast($P{dataInicio} as DATE) is null
-  or a.criacao >= $P{dataInicio})
- and (cast($P{dataFinal} as DATE) is null
-  or a.criacao <= $P{dataFinal})
- and ($P{filialId} is null
-  or f.id = any(string_to_array($P{filialId}, ',')::int[]))
- and (
-            $P{processoSeletivoId} is null
-  and $P{concursoId} is null
-  or exists (
-  select
-   1
-  from
-   aca.oferta o
-  join aca.concurso c2 on
-   c2.id = o.concurso_id
-  join aca.processo_seletivo ps on
-   ps.id = c2.processo_seletivo_id
-  where
-   o.filial_id = f.id
-   and ($P{processoSeletivoId} is null
-    or ps.id = any(string_to_array($P{processoSeletivoId}, ',')::int[]))
-    and ($P{concursoId} is null
-     or c2.id = any(string_to_array($P{concursoId}, ',')::int[]))
-        )
-      )
 ),
 alunos_filtrados as (
 select
@@ -86,4 +60,5 @@ from
  agrupados
 order by
  filial,
- curso;
+ curso
+LIMIT 100;

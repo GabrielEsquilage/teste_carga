@@ -32,37 +32,11 @@ join public.filial f2 on
 where
  f.exclusao is null
  and a.exclusao is null
- and (cast($P{data.inicio} as DATE) is null
-  or f.data_vencimento >= $P{data.inicio})
- and (cast($P{data.final} as DATE) is null
-  or f.data_vencimento <= $P{data.final})
- and (cast($P{nome_aluno} as TEXT) is null
-  or p.nome = $P{nome_aluno})
- and (cast($P{ra} as TEXT) is null
-  or a.ra = $P{ra})
- and (cast($P{tipo_cobranca} as INTEGER) is null
-  or tc.id = $P{tipo_cobranca})
- and (cast($P{curso_id} as INTEGER) is null
-  or c.id = $P{curso_id})
- and (cast($P{polo_id} as INTEGER) is null
-  or f2.id = $P{polo_id})
-group by
- f.numero_parcela,
- tc.nome,
- f.competencia,
- f.data_vencimento,
- f.valor_ate_vencimento,
- f.data_pagamento,
- f.valor_pago,
- s.nome,
- p.nome,
- a.ra,
- c.nome,
- f2.nome
 order by
  f.data_vencimento,
  aluno,
  curso,
  tipo_cobranca,
  parcela,
- vencimento;
+ vencimento
+LIMIT 100;

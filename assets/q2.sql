@@ -3,12 +3,11 @@ WITH financeiro_recente AS (
         fi.candidato_id,
         fi.data_pagamento,
         fi.criacao,
-        -- A partição aqui define o que é uma "tentativa de matrícula" única
         ROW_NUMBER() OVER(PARTITION BY fi.candidato_id, fi.tipo_cobranca_id ORDER BY fi.criacao DESC) as rn
     FROM
         fin.financeiro fi
     WHERE
-        fi.tipo_cobranca_id = 1 -- Tipo Cobrança de Matrícula
+        fi.tipo_cobranca_id = 1
 )
 SELECT
     p.nome,
@@ -35,10 +34,7 @@ LEFT JOIN financeiro_recente fr ON fr.candidato_id = c.id AND fr.rn = 1
 WHERE
     c.exclusao IS NULL
     AND a.exclusao IS NULL
-    AND (CAST($P{data.inicio} AS DATE) IS NULL OR c.criacao >= $P{data.inicio})
-    AND (CAST($P{data.final} AS DATE) IS NULL OR c.criacao <= $P{data.final})
-    AND (CAST($P{concurso_id} AS INTEGER) IS NULL OR c4.id = $P{concurso_id})
-    AND (CAST($P{processo_seletivo_id} AS INTEGER) IS NULL OR c4.processo_seletivo_id = $P{processo_seletivo_id})
 ORDER BY
     c.criacao,
-    p.nome;
+    p.nome
+LIMIT 100;

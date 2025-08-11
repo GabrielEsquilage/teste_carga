@@ -10,7 +10,7 @@ def inicializar_pool(db_config: dict):
             logging.info("Inicializando o pool de conexões com o banco de dados...")
             db_pool = pool.SimpleConnectionPool(
                 minconn=5,
-                maxconn=50,
+                maxconn=200,
                 host=db_config.get('DB_HOST'),
                 port=db_config.get('DB_PORT'),
                 dbname=db_config.get('DB_NAME'),
