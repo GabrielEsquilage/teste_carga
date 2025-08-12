@@ -1,8 +1,7 @@
 import os
 import logging
 import requests
-import schemathesis
-from schemathesis import Case
+from schemathesis import openapi, Case, checks
 from schemathesis.hooks import HookContext
 
 log = logging.getLogger(__name__)
@@ -48,8 +47,7 @@ def rodar_cenario_api():
         doc_url = os.getenv('API_BASE_DOC_ERP')
         log.info(f"Carregando especificação da API de {doc_url}")
         try:
-            # CORRIGIDO: de from_url para from_uri
-            schema = schemathesis.from_uri(doc_url)
+            schema = openapi.from_url(doc_url)
         except Exception as e:
             log.critical(f"Não foi possivel carregar o schema da API: {e}")
             return
@@ -66,7 +64,7 @@ def rodar_cenario_api():
 
     runner = schema.runner(
         base_url=os.getenv('API_BASE_URL_ERP'),
-        checks=schemathesis.checks.all_checks(),
+        checks=checks.load_all_checks(),
         workers_num=4
     )
 

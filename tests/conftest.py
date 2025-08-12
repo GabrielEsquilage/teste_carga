@@ -4,8 +4,7 @@ import logging
 from dotenv import load_dotenv
 import carregador.conexao_banco as pool_manager
 
-# Configura o logging para toda a sessão de testes.
-# Isso garante que a fixture 'caplog' funcione corretamente.
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',

@@ -19,11 +19,11 @@ def test_falha_inicializacao_com_senha_invalida(db_config_valida):
     if pool_manager.db_pool is not None:
         pool_manager.fechar_pool()
 
-    # Cria uma configuração inválida modificando a válida
+   
     config_invalida = db_config_valida.copy()
     config_invalida['DB_PASSWORD'] = 'senha-com-certeza-errada'
 
-    # Tenta inicializar o pool com a configuração ruim
+
     pool_manager.inicializar_pool(config_invalida)
 
     assert pool_manager.db_pool is None

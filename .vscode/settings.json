@@ -1,8 +1,4 @@
 {
-  "python.analysis.extraPaths": [
-    "./tests/test_",
-    "./tests/test_"
-  ],
   "python.testing.pytestArgs": [
     "tests"
   ],

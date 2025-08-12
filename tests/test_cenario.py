@@ -33,7 +33,7 @@ def test_rodar_cenario_banco_logica_principal(mocker, tmp_path, caplog):
     mocker.patch('time.sleep')
     mock_executor = mocker.patch('carregador.cenario_db.executar_query_db')
 
-    # Executa o cenário completo
+    
     cenario_db.rodar_cenario_db(
         num_threads=5,
         duracao_segundos=1,
@@ -48,7 +48,7 @@ def test_rodar_cenario_banco_logica_principal(mocker, tmp_path, caplog):
     assert cenario_db.parar_threads.is_set()
     assert "CENÁRIO DE TESTE DE CARGA NO BANCO FINALIZADO" in caplog.text
 
-    # --- Teste do trabalhador isolado com limite de iterações ---
+ 
     cenario_db.parar_threads.clear()
     mock_executor.reset_mock()
 
